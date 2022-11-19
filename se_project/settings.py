@@ -99,6 +99,10 @@ DOWNLOADER_MIDDLEWARES = {
    'se_project.middlewares.seleniumDownloaderMiddleware': 543,
 }
 
+ITEM_PIPELINES = {
+   'se_project.pipelines.MongoDBPipeline': 300,
+}
+
 custom_settings = {
    'DOWNLOAD_DELAY':8
 }
@@ -111,3 +115,21 @@ log_file_path = "log/scrapy_{}_{}_{}.log".format(today.year, today.month, today.
 # 日志输出
 LOG_LEVEL = 'DEBUG'
 LOG_FILE = log_file_path
+
+
+# 增加了一个去重容器类的配置, 作用使用Redis的set集合来存储请求的指纹数据, 从而实现请求去重的持久化
+DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+# 使用scrapy-redis组件自己的调度器
+SCHEDULER = "scrapy_redis.scheduler.Scheduler"
+# 配置调度器是否要持久化, 也就是当爬虫结束了, 要不要清空Redis中请求队列和去重指纹的set。如果是True, 就表示要持久化存储, 就不清空数据, 否则清空数据
+SCHEDULER_PERSIST = True
+
+REDIS_HOST = '192.168.10.125'
+REDIS_DB = 6
+REDIS_PORT = 6379
+REDIS_ENCODING ='utf-8'
+REDIS_PARAMS = {'password':'Citory2022'}
+
+
+MONGO_DB_URI = 'mongodb://wangweiliang:9eTmHHpk@192.168.10.105:32771/'
+MONGO_DB_NAME = 'crawler_test'

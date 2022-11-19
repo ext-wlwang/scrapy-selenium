@@ -10,6 +10,8 @@ from itemadapter import is_item, ItemAdapter
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver import Remote
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from scrapy.http import HtmlResponse
 import random
 import time
@@ -111,15 +113,17 @@ class SeProjectDownloaderMiddleware:
 
 class seleniumDownloaderMiddleware:
     def __init__(self):
-        options = webdriver.ChromeOptions()
-        # options.add_argument('--headless')
-        self.driver = webdriver.Chrome(chrome_options=options)
-        # 设置20秒页面超时返回
-        self.driver.set_page_load_timeout(180)
-        # 设置20秒脚本超时时间
-        self.driver.set_script_timeout(180)
-
-        
+        # options = webdriver.ChromeOptions()
+        # # options.add_argument('--headless')
+        # self.driver = webdriver.Chrome(chrome_options=options)
+        # # 设置20秒页面超时返回
+        # self.driver.set_page_load_timeout(180)
+        # # 设置20秒脚本超时时间
+        # self.driver.set_script_timeout(180)
+        self.driver = Remote(
+            command_executor="http://192.168.10.152:4444/wd/hub",
+            desired_capabilities=DesiredCapabilities.CHROME,
+        )
         self.driver.maximize_window()
     
     def random_time(self):
@@ -133,8 +137,7 @@ class seleniumDownloaderMiddleware:
 
 
 
-    def __del__(self):
-        self.driver.close()
+    
     
     def process_request(self, request, spider):
         self.driver.get(request.url)
@@ -148,9 +151,9 @@ class seleniumDownloaderMiddleware:
             print("=" * 30,count,len(body))
             self.random_time()
             # 判断是否又点击按钮
-            page = self.driver.find_elements_by_xpath("//a[text()='下一页 >>']")
+            page = self.driver.find_elements(By.XPATH,"//a[text()='下一页 >>']")
             if len(page) != 0:
-                self.driver.find_element_by_xpath("//a[text()='下一页 >>']").send_keys(Keys.ENTER)
+                self.driver.find_element(By.XPATH,"//a[text()='下一页 >>']").send_keys(Keys.ENTER)
                 self.random_time()
                 # return HtmlResponse(self.driver.current_url, body=self.driver.page_source,y, encoding='utf-8', request=request)
             else:
@@ -158,3 +161,6 @@ class seleniumDownloaderMiddleware:
         print(len(body))
         
         return HtmlResponse(self.driver.current_url, body=body, encoding='utf-8', request=request)
+    
+    def spider_closed(self):
+        self.driver.quit()
