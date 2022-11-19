@@ -28,10 +28,6 @@ class MfwSpider(scrapy.Spider):
             print(comment)
             print("="*30)
         
-        # 判断是否有下一页
-        # next = response.xpath("//a[text()='下一页 >>']")
-        # print("next:",next,len(next))
-        # if len(next) != 0:
-        #     yield scrapy.Request(response.url,callback=self.parse,meta={"page":'2'})
+        
 
 

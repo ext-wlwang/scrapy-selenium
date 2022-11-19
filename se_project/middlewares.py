@@ -137,29 +137,6 @@ class seleniumDownloaderMiddleware:
         self.driver.close()
     
     def process_request(self, request, spider):
-        
-        # 爬虫实现
-        # if int(request.meta['page']) == 2:
-        #     self.driver.get(request.url)
-        #     self.random_time()
-        #     self.driver.execute_async_script('window.scrollTo(0,document.body.scrollHeight)')
-        #     self.random_time()
-        #     next_pate = self.driver.find_element_by_xpath("//a[text()='下一页 >>']").text
-        #     if next_pate == '下一页 >>':
-        #         self.driver.find_element_by_xpath("//a[text()='下一页 >>']").send_keys(Keys.ENTER)
-        #         return HtmlResponse(self.driver.current_url, body=self.driver.page_source, encoding='utf-8', request=request)
-            
-        # else:
-        #     if int(request.meta['page']) == 0:
-        #         try:
-                    
-        #             self.driver.get(request.url)
-        #             self.random_time()
-        #         except Exception as e:
-        #             print("打开网页报错:",e)
-        #         self.random_time()
-                # return HtmlResponse(self.driver.current_url, body=self.driver.page_source, encoding='utf-8', request=request)
-        
         self.driver.get(request.url)
         self.random_time()
         count = 0
@@ -170,7 +147,6 @@ class seleniumDownloaderMiddleware:
             count += 1
             print("=" * 30,count,len(body))
             self.random_time()
-
             # 判断是否又点击按钮
             page = self.driver.find_elements_by_xpath("//a[text()='下一页 >>']")
             if len(page) != 0:
